@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faltou2last</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+</head>
+<body>
+
+<form id="form">
+    Nome: <input type="text" v-model="nome"> Sobrenome: <input type="text" v-model="sobrenome">
+    <br><br>
+    Email: <input type="email" v-model="email"> Telefone: <input type="tel" v-model="telefone">
+    <br><br>
+
+
+    Pessoa Jurídica: <input v-model="checkbox" type="checkbox">
+
+    <span v-if="checkbox">
+        CNPJ: <input type="text" v-model="cnpj">
+    </span>
+    <span v-else="checkbox">
+        CPF: <input type="text" v-model="cpf">
+    </span>
+    <br><br>
+    <button @click.prevent="salvar()">Salvar</button>
+    <br><br>
+    <div id="tabela">
+        <tabela
+                v-bind:labels="['Nome Completo', 'Email', 'Telefone', 'CPF', 'CNPJ']"
+                v-bind:mostra="fullname"
+                v-bind:pessoa="dados"
+        ></tabela>
+    </div>
+    <br><br>
+
+
+    <!-- ... -->
+    Remover:
+    <select id="remove" onchange="selecao()">
+        <option>--ITEM--</option>
+        <option v-for="item in ['Nome', 'Email', 'Telefone', 'CPF', 'CNPJ']">
+            {{item}}
+        </option>
+    </select>
+    <br><br>
+
+    <!-- ...
+    Editar:
+    <input v-model="" type="text">
+     -->
+
+
+</form>
+
+<script src="tabela_vue.js"></script>
+<script>
+    const app = new Vue({
+        el: '#form',
+        data: {
+            checkbox: false,
+            nome: null,
+            sobrenome: null,
+            email: null,
+            telefone: null,
+            cnpj: null,
+            cpf: null,
+
+            dados: []
+        },
+        watch: {
+            checkbox: function(novo, antigo) {
+                this.checkbox = novo //
+                this.cpf = this.cnpj = null;
+            }
+        },
+        methods: {
+            salvar: function () {
+
+                this.dados.push(
+                    {
+                        'fullname':null,
+                        'nome':this.nome, 'sobrenome':this.sobrenome,
+                        'email':this.email, 'telefone':this.telefone,
+                        'cpf':this.cpf, 'cnpj':this.cnpj
+                    });
+            }
+
+        },
+        computed: {
+            fullname: function() {
+                this.dados.forEach(function (elem) {
+                    elem.fullname = elem.nome+' '+elem.sobrenome;
+                });
+                return null;
+            }
+        }
+    })
+
+
+
+
+    //Falta 20min pra entregar, então vou fazer desse jeito gambiarrento
+    //E um pouco não específico do requisito, somente pra o último registro
+    function selecao() {
+        var select = document.getElementById('remove');
+        item_nome = select.options[select.selectedIndex].text;
+        item = select.selectedIndex
+
+        if (item == 1){
+            app.dados[app.dados.length-1].nome = '';
+            app.dados[app.dados.length-1].sobrenome = '';
+        } else if(item == 2) {
+            app.dados[app.dados.length-1].email = null;
+        } else if(item == 3) {
+            app.dados[app.dados.length-1].telefone = null;
+        } else if (item == 4) {
+            app.dados[app.dados.length-1].cpf = null;
+        } else if (item == 5) {
+            app.dados[app.dados.length-1].cnpj = null;
+        }
+
+        console.log(item);
+    }
+
+
+
+
+</script>
+
+</body>
+</html>
